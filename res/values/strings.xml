@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="hello">Hello World, DatumDroidActivity!</string>
+    <string name="app_name">DatumDroid</string>
+    <string name="videos">Videos</string>
+    <string name="pictures">Pictures</string>
+    <string name="tweets">Tweets</string>
+    <string name="playvideo">PlayVideo</string>
+    <string name="guardian">Guardian</string>
+    <string name="feedzilla">Feedzilla</string>
+    <string name="mainviewpageactivity">DatumDroid</string>
+    <string name="application_version">1.0.0</string>
+    <string name="search_text">What are you looking for...</string>
+    <string name="datum_search">Datum Search</string>
+    <string name="capture_it">Lazy to type? Capture it!</string>
+</resources>
