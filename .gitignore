@@ -1,3 +1,4 @@
+
 #java specific
 *.class
 
@@ -12,3 +13,4 @@ Thumbs.db
 #project specific
 bin/
 gen/
+.settings/
