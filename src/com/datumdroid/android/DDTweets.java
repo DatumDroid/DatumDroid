@@ -13,10 +13,10 @@ public class DDTweets {
 
 	public String[] texts;
 	public String[] profileImages;
-	private VideoCache vc;
+	private Cache<String> vc;
 
 	public DDTweets() {
-		vc = new VideoCache();
+		vc = new Cache<String>();
 	}
 
 	public void parseJSONData(String response) {

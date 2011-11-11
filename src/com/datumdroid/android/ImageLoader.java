@@ -24,7 +24,7 @@ import android.widget.ImageView;
 
 public class ImageLoader {
 	private static final String TAG = "DatumDroid";
-	MemoryCache memoryCache = new MemoryCache();
+	Cache<Bitmap> memoryCache = new Cache<Bitmap>();
 	FileCache fileCache;
 	private Map<ImageView, String> imageViews = Collections
 			.synchronizedMap(new WeakHashMap<ImageView, String>());

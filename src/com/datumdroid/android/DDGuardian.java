@@ -15,10 +15,10 @@ public class DDGuardian {
 	public String[] titles;
 	public String[] urls;
 
-	private VideoCache vc;
+	private Cache<String> vc;
 
 	public DDGuardian() {
-		vc = new VideoCache();
+		vc = new Cache<String>();
 	}
 
 	public void parseJSONData(String response) {

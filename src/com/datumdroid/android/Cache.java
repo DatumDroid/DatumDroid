@@ -5,14 +5,14 @@ import java.util.HashMap;
 
 import android.util.Log;
 
-public class VideoCache {
+public class Cache <T> {
 	private static final String TAG = "DatumDroid";
-	private HashMap<String, SoftReference<String>> cache = new HashMap<String, SoftReference<String>>();
+	private HashMap<String, SoftReference<T>> cache = new HashMap<String, SoftReference<T>>();
 
-	public String get(String id) {
+	public T get(String id) {
 		if (!cache.containsKey(id))
 			return null;
-		SoftReference<String> ref = cache.get(id);
+		SoftReference<T> ref = cache.get(id);
 		if (ref.get() == null) {
 			Log.i(TAG, "ref.get() is null");
 		}
@@ -23,8 +23,8 @@ public class VideoCache {
 		return cache.size();
 	}
 
-	public void put(String id, String s) {
-		cache.put(id, new SoftReference<String>(s));
+	public void put(String id, T s) {
+		cache.put(id, new SoftReference<T>(s));
 	}
 
 	public void clear() {

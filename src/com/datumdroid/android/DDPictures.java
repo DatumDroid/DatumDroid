@@ -15,10 +15,10 @@ public class DDPictures {
 	public String[] image_urls;
 	public String[] thumb_srcs;
 
-	private VideoCache vc;
+	private Cache<String> vc;
 
 	public DDPictures() {
-		vc = new VideoCache();
+		vc = new Cache<String>();
 	}
 
 	public void parseJSONData(String response) {

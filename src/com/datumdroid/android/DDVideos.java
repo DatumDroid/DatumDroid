@@ -17,10 +17,10 @@ public class DDVideos extends ListActivity {
 	public String[] titles;
 	public String[] watchPages;
 	public String[] thumbnails;
-	private VideoCache vc;
+	private Cache<String> vc;
 
 	public DDVideos() {
-		vc = new VideoCache();
+		vc = new Cache<String>();
 	}
 
 	public void parseJSONData(String response) {

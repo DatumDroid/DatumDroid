@@ -14,10 +14,10 @@ public class DDFeedzilla {
 	public String[] titles;
 	public String[] urls;
 
-	private VideoCache vc;
+	private Cache<String> vc;
 
 	public DDFeedzilla() {
-		vc = new VideoCache();
+		vc = new Cache<String>();
 	}
 
 	public void parseJSONData(String response) {
