@@ -8,7 +8,6 @@
     <string name="guardian">Guardian</string>
     <string name="feedzilla">Feedzilla</string>
     <string name="mainviewpageactivity">DatumDroid</string>
-    <string name="application_version">1.0.0</string>
     <string name="search_text">What are you looking for?</string>
     <string name="datum_search">Search</string>
     <string name="capture_it">Scan Image</string>

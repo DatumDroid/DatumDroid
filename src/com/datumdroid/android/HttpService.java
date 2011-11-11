@@ -148,7 +148,8 @@ public class HttpService extends Service {
 					AddParam(FEEDZILLA, "1");
 					AddParam(GIMAGES, "42");
 					AddHeader("user", "DatumDroid/Android/"
-							+ R.string.application_version);
+							+ getBaseContext().getPackageManager().getPackageInfo(
+									getBaseContext().getPackageName(), 0).versionCode);
 					Execute(RequestMethod.GET);
 
 					/* IMPORTANT CODE */
