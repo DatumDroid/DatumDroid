@@ -42,9 +42,7 @@ public class DatumDroidActivity extends Activity {
 	private static final String REQUEST_BY = "requestBy";
 	private static final String ALL = "all";
 
-	private static final String SEARCH_TERM = "searchTerm";
-	private static String NULLSEARCHTERM = "Please tell us what you are looking for!";
-	private static final String NO_NETWORK = "Please connect to the Internet";
+	private static final String SEARCH_TERM = "searchTerm";	
 
 	protected Button ocrButton;
 	protected EditText searchTextBox;
@@ -109,7 +107,7 @@ public class DatumDroidActivity extends Activity {
 			boolean is3G = check3gConnection();
 
 			if ((isWifi || is3G) == false) {
-				Toast toast = Toast.makeText(this, NO_NETWORK,
+				Toast toast = Toast.makeText(this, R.string.no_network,
 						Toast.LENGTH_LONG);
 				toast.setGravity(Gravity.CENTER, 0, 0);
 				toast.show();
@@ -125,7 +123,7 @@ public class DatumDroidActivity extends Activity {
 								+ searchTextBox.getText().toString());
 						if (searchTextBox.getText().toString().isEmpty()) {
 							Toast.makeText(DatumDroidActivity.this,
-									NULLSEARCHTERM, Toast.LENGTH_SHORT);
+									R.string.null_search_term, Toast.LENGTH_SHORT);
 							Log.i(TAG, "SEARCH TERM IS EMPTY");
 						} else {
 							new MyTask(DatumDroidActivity.this, searchTextBox

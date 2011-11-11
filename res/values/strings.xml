@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="hello">Hello World, DatumDroidActivity!</string>
     <string name="app_name">DatumDroid</string>
     <string name="videos">Videos</string>
     <string name="pictures">Pictures</string>
@@ -10,7 +9,9 @@
     <string name="feedzilla">Feedzilla</string>
     <string name="mainviewpageactivity">DatumDroid</string>
     <string name="application_version">1.0.0</string>
-    <string name="search_text">What are you looking for...</string>
-    <string name="datum_search">Datum Search</string>
-    <string name="capture_it">Lazy to type? Capture it!</string>
+    <string name="search_text">What are you looking for?</string>
+    <string name="datum_search">Search</string>
+    <string name="capture_it">Scan Image</string>
+    <string name="no_network">Please connect to the Internet</string>
+    <string name="null_search_term">Please tell us what you are looking for!</string>
 </resources>
