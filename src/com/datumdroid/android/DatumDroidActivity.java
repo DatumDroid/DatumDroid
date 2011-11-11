@@ -49,6 +49,7 @@ public class DatumDroidActivity extends Activity {
 	protected String ocrPath = DATA_PATH + "/ocr.jpg";
 	protected boolean ocrTaken;
 	protected static final String PHOTO_TAKEN = "photo_taken";
+	protected static final String SEARCH_QUERY = "search_query";
 
 	/** Called when the activity is first created. */
 	@Override
@@ -260,7 +261,8 @@ public class DatumDroidActivity extends Activity {
 
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
-		outState.putBoolean(DatumDroidActivity.PHOTO_TAKEN, ocrTaken);
+		outState.putBoolean(PHOTO_TAKEN, ocrTaken);
+		outState.putString(SEARCH_QUERY, searchTextBox.getText().toString());
 	}
 
 	@Override
@@ -269,6 +271,8 @@ public class DatumDroidActivity extends Activity {
 		if (savedInstanceState.getBoolean(DatumDroidActivity.PHOTO_TAKEN)) {
 			onPhotoTaken();
 		}
+		
+		searchTextBox.setText(savedInstanceState.getString(SEARCH_QUERY));
 	}
 
 	public class MyTask extends AsyncTask<Void, Integer, Void> {
