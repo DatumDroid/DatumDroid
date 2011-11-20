@@ -122,7 +122,7 @@ public class DatumDroidActivity extends Activity {
 						Log.d(TAG, "onClick: starting service");
 						Log.d(TAG, "search term sent:"
 								+ searchTextBox.getText().toString());
-						if (searchTextBox.getText().toString().isEmpty()) {
+						if (searchTextBox.getText().toString().length() == 0) {
 							Toast.makeText(DatumDroidActivity.this,
 									R.string.null_search_term, Toast.LENGTH_SHORT);
 							Log.i(TAG, "SEARCH TERM IS EMPTY");
