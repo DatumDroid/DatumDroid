@@ -23,11 +23,7 @@
             android:label="@string/mainviewpageactivity"
             android:name="com.datumdroid.android.MainViewPageActivity" >
         </activity>
-
-        <service
-            android:enabled="true"
-            android:name="com.datumdroid.android.HttpService" />
-
+        
         <receiver
             android:enabled="true"
             android:name="com.datumdroid.android.IntentReceiver" >

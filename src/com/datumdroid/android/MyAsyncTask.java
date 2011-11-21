@@ -23,21 +23,17 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
-import com.datumdroid.android.R;
-
-import android.app.Service;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.util.Log;
 
-public class HttpService extends Service {
-
+public class MyAsyncTask extends AsyncTask<Void, Void, Void> {
 	private static final String TAG = "DatumDroid";
 	private static final String SERVER_URL = "http://api.datumdroid.com/1.0/request.php";
 
-	private static final String REQUEST_BY = "requestBy";
-	private static final String SEARCH_TERM = "searchTerm";
 	private static final String ALL = "all";
 
 	private static final String YOUTUBE = "youtube";
@@ -57,21 +53,26 @@ public class HttpService extends Service {
 	private static final String FTITLES = "ftitles";
 	private static final String FURLS = "furls";
 
+	private static final String GIMAGES = "gimages";
 	private static final String PURLS = "purls";
 	private static final String PTHUMBNAILS = "pthumbnails";
 
-	private static final String GIMAGES = "gimages";
-
 	private ArrayList<NameValuePair> params;
 	private ArrayList<NameValuePair> headers;
+	
 	private DDVideos video = new DDVideos();
 	private DDTweets tweet = new DDTweets();
 	private DDGuardian guardian = new DDGuardian();
 	private DDFeedzilla feedzilla = new DDFeedzilla();
 	private DDPictures picture = new DDPictures();
+	private int version;
 
+	
+	ProgressDialog progress;
+	String searchTerm;
+	String category;
 	Bundle sendBundle;
-	Bundle getBundle;
+	Context ctx;
 
 	private String url;
 
@@ -86,6 +87,9 @@ public class HttpService extends Service {
 
 	public String getResponse() {
 		return response;
+	}
+	public int getVersion() {
+		return version;
 	}
 
 	public String getErrorMessage() {
@@ -110,118 +114,143 @@ public class HttpService extends Service {
 		headers.add(new BasicNameValuePair(name, value));
 	}
 
-	@Override
-	public IBinder onBind(Intent intent) {
-		return null;
-	}
 
 	/*-------------------------------------------*/
-	@Override
-	public void onCreate() {
-		Log.d(TAG, "HttpService:onCreate");
-		SetURL(SERVER_URL);
+	public MyAsyncTask(Context c, String s, String cat) {
+		ctx = c;
+		searchTerm = s;
+		category = cat;
+		progress = new ProgressDialog(ctx); // create the progress dialog here
+	}
+	
+	public void onPreExecute() {
+		//TODO: change color of the progress dialog
+		//to match the background
+		Log.d(TAG, "Asynctask Started");
+		progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+		progress.setMessage("Loading...");
+		progress.setIndeterminate(true);
+		progress.setCancelable(false);
+		progress.show();			
 	}
 
 	@Override
-	public void onStart(Intent intent, int startid) {
-		Log.i(TAG, "HttpService:onStart");
-
+	protected Void doInBackground(Void... param) {
 		try {
-			getBundle = intent.getExtras();
+			sendBundle = new Bundle();
+			SetURL(SERVER_URL);
+			version = ctx.getPackageManager().getPackageInfo(
+					ctx.getPackageName(), 0).versionCode;
 
-			if (getBundle.getString(SEARCH_TERM) != null) {
+
+			if (searchTerm != null) {
 				Log.i(TAG,
 						"search term received:"
-								+ getBundle.getString(SEARCH_TERM));
-				String s = URLEncoder.encode(getBundle.getString(SEARCH_TERM),
+								+ searchTerm);
+				String s = URLEncoder.encode(searchTerm,
 						"UTF-8");
 				Log.i(TAG, "search term AFTER:" + s);
 				AddParam("q", s);
-				sendBundle = new Bundle();
+				
+				//TODO : enable paging and selective adding of parameters
+				// like done below for the response
+				AddParam(YOUTUBE, "1");
+				AddParam(TWITTER, "1");
+				AddParam(GUARDIAN, "1");
+				AddParam(FEEDZILLA, "1");
+				AddParam(GIMAGES, "42");
+				AddHeader("user", "DatumDroid/Android/" + 
+						getVersion());
+				
+				Log.w(TAG, "BEFORE execute = " + 
+						Long.toString(System.currentTimeMillis()));
+				Execute(RequestMethod.GET);
+				Log.w(TAG, "AFTER execute = " + 
+						Long.toString(System.currentTimeMillis()));
 
-				if (getBundle.getString(REQUEST_BY).equalsIgnoreCase(ALL)) {
-
-					Log.i(TAG, "HTTPService:ALL case");
-					AddParam(YOUTUBE, "1");
-					AddParam(TWITTER, "1");
-					AddParam(GUARDIAN, "1");
-					AddParam(FEEDZILLA, "1");
-					AddParam(GIMAGES, "42");
-					AddHeader("user", "DatumDroid/Android/"
-							+ getBaseContext().getPackageManager().getPackageInfo(
-									getBaseContext().getPackageName(), 0).versionCode);
-					Execute(RequestMethod.GET);
-
-					/* IMPORTANT CODE */
-					JSONObject jObject = (JSONObject) new JSONTokener(
-							getResponse()).nextValue();
-
+				Log.i(TAG, "MYRESPONSE");
+				Log.i(TAG, getResponse());
+				Log.i(TAG, "DONE RESPONSE");
+				
+				/* IMPORTANT CODE */
+				JSONObject jObject = (JSONObject) new JSONTokener(
+						getResponse()).nextValue();
+				
+				
+				if(category.equalsIgnoreCase(ALL) || category.equalsIgnoreCase(YOUTUBE)) {
 					JSONArray jYoutube = jObject.getJSONArray(YOUTUBE);
 					Log.i(TAG, "YOUTUBE:" + jYoutube.toString());
 					video.parseJSONData(jYoutube.toString());
 					video.createAdapterStrings();
-
+					
+					sendBundle.putStringArray(VTITLES, video.titles);
+					sendBundle.putStringArray(VTHUMBNAILS, video.thumbnails);
+					sendBundle.putStringArray(VURLS, video.watchPages);
+					
+				}
+				if(category.equalsIgnoreCase(ALL) || category.equalsIgnoreCase(TWITTER)) {
 					JSONArray jTwitter = jObject.getJSONArray(TWITTER);
 					Log.i(TAG, "TWITTER" + jTwitter.toString());
 					tweet.parseJSONData(jTwitter.toString());
 					tweet.createAdapterStrings();
-
+					
+					sendBundle.putStringArray(TTEXTS, tweet.texts);
+					sendBundle.putStringArray(TTHUMBNAILS, tweet.profileImages);
+					
+				}
+				if(category.equalsIgnoreCase(ALL) || category.equalsIgnoreCase(GUARDIAN)) {
 					JSONArray jGuardian = jObject.getJSONArray(GUARDIAN);
 					Log.i(TAG, "GUARDIAN" + jGuardian.toString());
 					guardian.parseJSONData(jGuardian.toString());
 					guardian.createAdapterStrings();
-
+					
+					sendBundle.putStringArray(GTITLES, guardian.titles);
+					sendBundle.putStringArray(GURLS, guardian.urls);
+					
+				}
+				if(category.equalsIgnoreCase(ALL) || category.equalsIgnoreCase(FEEDZILLA)) {
 					JSONArray jFeedzilla = jObject.getJSONArray(FEEDZILLA);
 					Log.i(TAG, "FEEDZILLA" + jFeedzilla.toString());
 					feedzilla.parseJSONData(jFeedzilla.toString());
 					feedzilla.createAdapterStrings();
-
-					JSONArray jGimages = jObject.getJSONArray("gimages");
+					
+					sendBundle.putStringArray(FTITLES, feedzilla.titles);
+					sendBundle.putStringArray(FURLS, feedzilla.urls);
+					
+				}
+				if(category.equalsIgnoreCase(ALL) || category.equalsIgnoreCase(GIMAGES)) {
+					JSONArray jGimages = jObject.getJSONArray(GIMAGES);
 					Log.i(TAG, "GIMAGES" + jGimages.toString());
 					picture.parseJSONData(jGimages.toString());
 					picture.createAdapterStrings();
 
-					Log.i(TAG, "MYRESPONSE");
-					Log.i(TAG, getResponse());
-					Log.i(TAG, "DONE RESPONSE");
-
-					sendBundle.putStringArray(VTITLES, video.titles);
-					sendBundle.putStringArray(VTHUMBNAILS, video.thumbnails);
-					sendBundle.putStringArray(VURLS, video.watchPages);
-
 					sendBundle.putStringArray(PURLS, picture.image_urls);
 					sendBundle.putStringArray(PTHUMBNAILS, picture.thumb_srcs);
-
-					sendBundle.putStringArray(GTITLES, guardian.titles);
-					sendBundle.putStringArray(GURLS, guardian.urls);
-
-					sendBundle.putStringArray(TTEXTS, tweet.texts);
-					sendBundle.putStringArray(TTHUMBNAILS, tweet.profileImages);
-
-					sendBundle.putStringArray(FTITLES, feedzilla.titles);
-					sendBundle.putStringArray(FURLS, feedzilla.urls);
-
+					
 				}
-
-				Intent intent1 = new Intent(this, IntentReceiver.class);
-				intent1.putExtras(sendBundle);
-				intent1.setAction("android.intent.action.PHONE_STATE");
-				sendBroadcast(intent1, null);
-
-			} else {
-				Log.i(TAG, "HttpService:onStart(): SEARCH TERM IS NULL");
+				
+			}else {
+				Log.i(TAG, "AsyncTask : SEARCH TERM IS NULL");
 			}
-		} catch (Exception e) {
-			Log.e(TAG, "error1 is = " + e.toString());
+		}catch (Exception e) {
+			Log.e(TAG, "AsyncTask error is = " + e.toString());		
+		}			
+		return null;
+	}
+	
+
+	public void onPostExecute(Void unused) {
+		
+		Intent intent1 = new Intent(ctx, IntentReceiver.class);
+		intent1.putExtras(sendBundle);
+		intent1.setAction("android.intent.action.PHONE_STATE");
+		ctx.sendBroadcast(intent1, null);
+		if (progress.isShowing()) {
+			progress.dismiss();
 		}
-	}
-
-	@Override
-	public void onDestroy() {
-		Log.i(TAG, "HttpService:onDestroy");
+		Log.d(TAG, "Asynctask finished");
 
 	}
-
 	/*--------------------------------------------------*/
 
 	public void Execute(RequestMethod post) throws Exception {
@@ -251,8 +280,11 @@ public class HttpService extends Service {
 			for (NameValuePair h : headers) {
 				request.addHeader(h.getName(), h.getValue());
 			}
-
+			Log.w(TAG, "executeRequest START = " + 
+					Long.toString(System.currentTimeMillis()));
 			executeRequest(request, url);
+			Log.w(TAG, "executeRequest FINISH = " + 
+					Long.toString(System.currentTimeMillis()));
 			break;
 		}
 		case POST: {
@@ -274,6 +306,7 @@ public class HttpService extends Service {
 	}
 
 	private void executeRequest(HttpUriRequest request, String url) {
+		
 		HttpClient client = new DefaultHttpClient();
 
 		HttpResponse httpResponse;
@@ -288,7 +321,11 @@ public class HttpService extends Service {
 			if (entity != null) {
 
 				InputStream instream = entity.getContent();
+				Log.w(TAG, "convertStreamtoString START = " + 
+						Long.toString(System.currentTimeMillis()));
 				response = convertStreamToString(instream);
+				Log.w(TAG, "convertStreamToString FINISH = " + 
+						Long.toString(System.currentTimeMillis()));
 
 				// Closing the input stream will trigger connection release
 				instream.close();

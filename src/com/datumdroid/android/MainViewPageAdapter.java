@@ -25,7 +25,7 @@ public class MainViewPageAdapter extends PagerAdapter implements TitleProvider {
 
 	private static String[] titles = new String[] { "Videos", "Pictures",
 			"Guardian", "Tweets", "Feedzilla" };
-	private static final String NORESULTSFOUND = "Sorry! Ain't got any candy here!";
+	private static final String NORESULTSFOUND = "Sorry! No Donuts found!";
 
 	private HelpStringData help_data;
 	private VideoListAdapter vadapter;
