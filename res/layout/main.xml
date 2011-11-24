@@ -22,16 +22,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/search_text" />
-
-        <Button
+
+      <Button
             android:id="@+id/ocrButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"
-            android:text="@string/capture_it"/>
-
-        <Button
+            android:text="@string/capture_it"/>
+	<Button
             android:id="@+id/searchButton"
             android:layout_width="120dip"
             android:layout_height="wrap_content"
@@ -39,7 +38,29 @@
             android:layout_below="@+id/searchTextBox"
             android:minWidth="60dip"
             android:text="@string/datum_search"/>
+   
+	<TextView android:id="@+id/recentSearchTitle"
+    	android:layout_width="fill_parent"
+    	android:layout_height="wrap_content"
+    	android:padding="10dp"
+    	android:textSize="20dip" 
+    	android:textStyle="bold|italic"
+    	android:text = "@string/recent_search"
+    	android:layout_below="@+id/searchButton">
+
+	</TextView>
+	<ListView 
+			android:id="@+id/recentSearchList"
+            android:layout_width="fill_parent"
+            android:layout_height="300dip"
+            android:layout_below="@+id/recentSearchTitle"
+            android:layout_above="@+id/searchocrButton"
+     />
+     
+     
+        
 
     </RelativeLayout>
+    
 
 </LinearLayout>

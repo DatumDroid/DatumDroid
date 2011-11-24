@@ -5,10 +5,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Set;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -23,9 +25,14 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.Toast;
+import android.widget.AdapterView.OnItemClickListener;
 
 import com.googlecode.tesseract.android.TessBaseAPI;
 
@@ -36,6 +43,11 @@ public class DatumDroidActivity extends Activity {
 
 	private static final String TAG = "DatumDroid";
 	private static final String ALL = "all";
+	private static String EMPTY = "empty...";
+	String[] test = new String[5];
+	private int temp = 1;
+	SharedPreferences recentSearchTerms;
+    SharedPreferences.Editor editor;
 
 	protected Button ocrButton;
 	protected EditText searchTextBox;
@@ -49,6 +61,8 @@ public class DatumDroidActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
+		recentSearchTerms = getPreferences(MODE_PRIVATE);
+		editor = recentSearchTerms.edit();
 		Log.i(TAG, "onCreate");
 
 	}
@@ -56,8 +70,28 @@ public class DatumDroidActivity extends Activity {
 	@Override
 	protected void onStart() {
 		super.onStart();
+		
+		for(int i = 1; i<= 5; i++) {
+//			Log.w(TAG, Integer.toString(i));
+//			Log.w(TAG, recentSearchTerms.getString(Integer.toString(i), EMPTY));
+			test[i-1] = recentSearchTerms.getString(Integer.toString(i), EMPTY);	        
+		}
+				
+		ListAdapter adapter = new ArrayAdapter<String>(this, R.layout.recent_search_list_item, test);
+        final ListView recentSearchList = (ListView) findViewById(R.id.recentSearchList);
+        recentSearchList.setAdapter(adapter);
 
-		Log.i(TAG, "onStart");
+        recentSearchList.setOnItemClickListener(new OnItemClickListener() {
+			public void onItemClick(AdapterView<?> adapter, View view,
+					int position, long arg3) {
+				if(recentSearchList.getItemAtPosition(position).toString().equalsIgnoreCase(EMPTY)
+						== false) {
+					new MyAsyncTask(DatumDroidActivity.this, 
+							recentSearchList.getItemAtPosition(position).toString(),
+							ALL).execute();
+				}
+				}
+		});   
 
 		String[] paths = new String[] { DATA_PATH, DATA_PATH + "tessdata/" };
 		boolean try_copy = !(new File(DATA_PATH + "eng.traineddata")).exists();
@@ -99,7 +133,9 @@ public class DatumDroidActivity extends Activity {
 		try {
 			boolean isWifi = checkWifiConnection();
 			boolean is3G = check3gConnection();
-
+			
+			Log.i(TAG, "onStart");
+			
 			if ((isWifi || is3G) == false) {
 				Toast toast = Toast.makeText(this, R.string.no_network,
 						Toast.LENGTH_LONG);
@@ -119,13 +155,22 @@ public class DatumDroidActivity extends Activity {
 							Toast.makeText(DatumDroidActivity.this,
 									R.string.null_search_term, Toast.LENGTH_SHORT);
 							Log.i(TAG, "SEARCH TERM IS EMPTY");
-						} else {
+						} else {							
+							editor.putString(Integer.toString(temp), searchTextBox.getText().toString());
+							editor.commit();
+							
+							++temp;
+					        
+					        if(temp > 5) {
+					        	temp = 1;
+					        }
+					        					        
 							new MyAsyncTask(DatumDroidActivity.this, searchTextBox
 									.getText().toString(), ALL).execute();
 						}
 					}
 				});
-
+				
 				ocrButton = (Button) findViewById(R.id.ocrButton);
 				ocrButton.setOnClickListener(new OnClickListener() {
 
