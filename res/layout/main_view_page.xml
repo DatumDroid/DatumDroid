@@ -8,7 +8,7 @@
         android:id="@+id/include1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        layout="@layout/actionbar" />
+        layout="@layout/action_bar" />
 
     <com.viewpagerindicator.TitlePageIndicator
         android:id="@+id/title_indicator"
