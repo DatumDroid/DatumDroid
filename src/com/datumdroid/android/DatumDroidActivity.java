@@ -189,7 +189,7 @@ public class DatumDroidActivity extends Activity {
 							Log.i(TAG, "SEARCH TERM IS EMPTY");
 						} else {	
 							
-							searchedText = searchTextBox.getText().toString();
+							searchedText = searchTextBox.getText().toString().trim();
 							insert = true;
 							new MyAsyncTask(DatumDroidActivity.this, searchedText,
 									ALL).execute();
