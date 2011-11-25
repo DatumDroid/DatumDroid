@@ -44,8 +44,11 @@ public class DatumDroidActivity extends Activity {
 	private static final String TAG = "DatumDroid";
 	private static final String ALL = "all";
 	private static String EMPTY = "empty...";
-	String[] test = new String[5];
-	private int temp = 1;
+	
+	private String searchedText;
+	private int temp = -1;
+	private final int MAX_RECENT_SEARCH_TERMS = 5;
+	String[] test = new String[MAX_RECENT_SEARCH_TERMS];
 	SharedPreferences recentSearchTerms;
     SharedPreferences.Editor editor;
 
@@ -55,13 +58,15 @@ public class DatumDroidActivity extends Activity {
 	protected boolean ocrTaken;
 	protected static final String PHOTO_TAKEN = "photo_taken";
 	protected static final String SEARCH_QUERY = "search_query";
+	private static final String RECENT_SEARCH_TERMS = "Recent Search Terms";
+	private boolean insert = false;
 
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-		recentSearchTerms = getPreferences(MODE_PRIVATE);
+		recentSearchTerms = getSharedPreferences(RECENT_SEARCH_TERMS, MODE_PRIVATE);//getPreferences(MODE_PRIVATE);
 		editor = recentSearchTerms.edit();
 		Log.i(TAG, "onCreate");
 
@@ -71,7 +76,33 @@ public class DatumDroidActivity extends Activity {
 	protected void onStart() {
 		super.onStart();
 		
-		for(int i = 1; i<= 5; i++) {
+		if(insert && !(test[0].equalsIgnoreCase(searchedText))) {
+			Log.w(TAG, "IN INSERT");
+			for(int i = 0; i<MAX_RECENT_SEARCH_TERMS; i++) {
+				if(test[i].equalsIgnoreCase(searchedText)) {
+					temp = i+1; // since in array it is 0-4 and in shared 
+								//preferences it is 1-5
+					break;
+				}
+			}
+			if(temp != -1) {
+				
+				for(int i = temp; i>=1; i--) {
+					editor.putString(Integer.toString(i),recentSearchTerms.getString(Integer.toString(i-1), EMPTY));
+				}
+				editor.putString(Integer.toString(1), searchedText);
+				editor.commit();			
+				temp = -1;
+			}else {
+				for(int i = 5; i>=2; i--) {
+					editor.putString(Integer.toString(i),recentSearchTerms.getString(Integer.toString(i-1), EMPTY));
+				}
+				editor.putString(Integer.toString(1), searchedText);
+				editor.commit();		
+			}
+	        insert = false;
+		}
+		for(int i = 1; i<= MAX_RECENT_SEARCH_TERMS; i++) {
 //			Log.w(TAG, Integer.toString(i));
 //			Log.w(TAG, recentSearchTerms.getString(Integer.toString(i), EMPTY));
 			test[i-1] = recentSearchTerms.getString(Integer.toString(i), EMPTY);	        
@@ -86,9 +117,10 @@ public class DatumDroidActivity extends Activity {
 					int position, long arg3) {
 				if(recentSearchList.getItemAtPosition(position).toString().equalsIgnoreCase(EMPTY)
 						== false) {
+					insert = true;
+					searchedText = recentSearchList.getItemAtPosition(position).toString();
 					new MyAsyncTask(DatumDroidActivity.this, 
-							recentSearchList.getItemAtPosition(position).toString(),
-							ALL).execute();
+							searchedText, ALL).execute();
 				}
 				}
 		});   
@@ -155,18 +187,12 @@ public class DatumDroidActivity extends Activity {
 							Toast.makeText(DatumDroidActivity.this,
 									R.string.null_search_term, Toast.LENGTH_SHORT);
 							Log.i(TAG, "SEARCH TERM IS EMPTY");
-						} else {							
-							editor.putString(Integer.toString(temp), searchTextBox.getText().toString());
-							editor.commit();
+						} else {	
 							
-							++temp;
-					        
-					        if(temp > 5) {
-					        	temp = 1;
-					        }
-					        					        
-							new MyAsyncTask(DatumDroidActivity.this, searchTextBox
-									.getText().toString(), ALL).execute();
+							searchedText = searchTextBox.getText().toString();
+							insert = true;
+							new MyAsyncTask(DatumDroidActivity.this, searchedText,
+									ALL).execute();
 						}
 					}
 				});
@@ -197,7 +223,7 @@ public class DatumDroidActivity extends Activity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		Log.i(TAG, "onResume");
+		Log.i(TAG, "onResume");  
 
 	}
 
