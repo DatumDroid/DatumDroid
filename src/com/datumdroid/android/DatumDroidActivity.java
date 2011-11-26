@@ -119,7 +119,7 @@ public class DatumDroidActivity extends Activity {
 						== false) {
 					insert = true;
 					searchedText = recentSearchList.getItemAtPosition(position).toString();
-					new MyAsyncTask(DatumDroidActivity.this, 
+					new FeedAsyncTask(DatumDroidActivity.this, 
 							searchedText, ALL).execute();
 				}
 				}
@@ -191,7 +191,7 @@ public class DatumDroidActivity extends Activity {
 							
 							searchedText = searchTextBox.getText().toString().trim();
 							insert = true;
-							new MyAsyncTask(DatumDroidActivity.this, searchedText,
+							new FeedAsyncTask(DatumDroidActivity.this, searchedText,
 									ALL).execute();
 						}
 					}

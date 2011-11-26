@@ -30,7 +30,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 
-public class MyAsyncTask extends AsyncTask<Void, Void, Void> {
+public class FeedAsyncTask extends AsyncTask<Void, Void, Void> {
 	private static final String TAG = "DatumDroid";
 	private static final String SERVER_URL = "http://api.datumdroid.com/1.0/request.php";
 
@@ -116,7 +116,7 @@ public class MyAsyncTask extends AsyncTask<Void, Void, Void> {
 
 
 	/*-------------------------------------------*/
-	public MyAsyncTask(Context c, String s, String cat) {
+	public FeedAsyncTask(Context c, String s, String cat) {
 		ctx = c;
 		searchTerm = s;
 		category = cat;
