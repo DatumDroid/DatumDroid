@@ -5,7 +5,7 @@
     android:layout_height="wrap_content" >
 
     <ImageView
-        android:id="@+id/thumbnail"
+        android:id="@+id/item_thumb"
         android:layout_width="50dip"
         android:layout_height="50dip"
         android:layout_alignParentLeft="true"
@@ -13,19 +13,21 @@
         android:src="@drawable/stub" />
 
     <TextView
-        android:id="@+id/list_text"
+        android:id="@+id/item_title"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@+id/thumbnail"
         android:text="Title text"
+        android:ellipsize="end"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <TextView
-        android:id="@+id/textView1"
+        android:id="@+id/item_desc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/list_text"
         android:layout_below="@+id/list_text"
+        android:ellipsize="end"
         android:text="Description text" />
 
 </RelativeLayout>
