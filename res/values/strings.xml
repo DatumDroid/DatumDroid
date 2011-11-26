@@ -13,5 +13,5 @@
     <string name="capture_it">Scan Image</string>
     <string name="no_network">Please connect to the Internet</string>
     <string name="null_search_term">Please tell us what you are looking for!</string>
-    <string name="recent_search">Most Recent Searches - </string>
+    <string name="recent_search">Recent Searches</string>
 </resources>
