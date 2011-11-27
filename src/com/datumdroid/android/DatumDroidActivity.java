@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URL;
 import java.util.Map;
 
 import android.app.Activity;
@@ -82,11 +83,11 @@ public class DatumDroidActivity extends Activity {
 		RSTeditor = recentSearchTerms.edit();
 		contentSources = getSharedPreferences(CONTENT_SOURCES, MODE_PRIVATE);
 		CSeditor = contentSources.edit();
-		CSeditor.putString("pref1", "youtube");
-		CSeditor.putString("pref2", "gimages");
-		CSeditor.putString("pref3", "guardian");
-		CSeditor.putString("pref4", "twitter");
-		CSeditor.putString("pref5", "feedzilla");
+		CSeditor.putString("pref1", "youtube.com");
+		CSeditor.putString("pref2", "gimages.com");
+		CSeditor.putString("pref3", "guardian.com");
+		CSeditor.putString("pref4", "twitter.com");
+		CSeditor.putString("pref5", "feedzilla.com");
 		CSeditor.commit();
 		Log.i(TAG, "onCreate");
 
@@ -258,16 +259,16 @@ public class DatumDroidActivity extends Activity {
 					CPeditor.putString("editTextPref", "http://");
 					CPeditor.commit();
 					//TODO: case where the url is bad
+					URL url = new URL(temp.replace(" ", ""));
 					
 					
 					//case where url is good
 					CSeditor.putString("pref"+Integer.toString(content_sources_select.size()),
-							temp.replace(" ", ""));
+							url.toString());
 					CSeditor.commit();
 					CPeditor.putBoolean("pref"+Integer.toString(content_sources_select.size()), true);
 					CPeditor.commit();
-					
-					Log.i(TAG, "HELLO");
+
 					insert_content = false;
 				}
 				//in content_sources_select everything is a boolean
