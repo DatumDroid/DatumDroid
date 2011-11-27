@@ -264,7 +264,7 @@ public class DatumDroidActivity extends Activity {
 					
 					//case where url is good
 					CSeditor.putString("pref"+Integer.toString(content_sources_select.size()),
-							url.toString());
+							url.toString().replaceAll(("http://|https://"), ""));
 					CSeditor.commit();
 					CPeditor.putBoolean("pref"+Integer.toString(content_sources_select.size()), true);
 					CPeditor.commit();

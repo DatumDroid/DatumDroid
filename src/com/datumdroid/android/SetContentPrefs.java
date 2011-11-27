@@ -26,7 +26,7 @@ public class SetContentPrefs extends PreferenceActivity{
 		        SharedPreferences temp = getSharedPreferences(CONTENT_SOURCES, MODE_PRIVATE);
 		        Map<String, String> tempContent = (Map<String, String>) temp.getAll();
 		        
-		        for(int i = 6; i<=tempContent.size(); i++) {
+		        for(int i = 6; i<=tempContent.size(); i++) { // as first 5 are already there
 		        	//create one check box for each setting you need
 			        checkBoxPreference = new CheckBoxPreference(this);
 			        //make sure each key is unique  
