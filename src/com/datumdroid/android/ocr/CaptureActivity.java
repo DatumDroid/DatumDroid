@@ -28,8 +28,6 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
@@ -48,7 +46,6 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -119,7 +116,6 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
   private View resultView;
   private View progressView;
   private OcrResult lastResult;
-  private Bitmap lastBitmap;
   private boolean hasSurface;
   private TessBaseAPI baseApi; // Java interface for the Tesseract OCR engine
   private String sourceLanguageCodeOcr; // ISO 639-3 language code
@@ -639,31 +635,14 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
     cameraButtonView.setVisibility(View.GONE);
     viewfinderView.setVisibility(View.GONE);
     resultView.setVisibility(View.VISIBLE);
-    
-//    // Disable light
-//    CameraManager.get().disableLight();
-
-    ImageView bitmapImageView = (ImageView) findViewById(R.id.image_view);
-    lastBitmap = ocrResult.getBitmap();
-    if (lastBitmap == null) {
-      bitmapImageView.setImageBitmap(BitmapFactory.decodeResource(getResources(),
-          R.drawable.icon));
-    } else {
-      bitmapImageView.setImageBitmap(lastBitmap);
-    }
-
-    // Display the recognized text
-    TextView sourceLanguageTextView = (TextView) findViewById(R.id.source_language_text_view);
-    sourceLanguageTextView.setText(sourceLanguageReadable);
-    TextView ocrResultTextView = (TextView) findViewById(R.id.ocr_result_text_view);
-    ocrResultTextView.setText(ocrResult.getText());
-    // Crudely scale betweeen 22 and 32 -- bigger font for shorter text
-    int scaledSize = Math.max(22, 32 - ocrResult.getText().length() / 4);
-    ocrResultTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, scaledSize);
-
     progressView.setVisibility(View.GONE);
     setProgressBarVisibility(false);
-    return true;
+
+	Log.v(TAG, "Sending back OCR Text " + ocrResult.getText());
+	Intent intent = new Intent(ocrResult.getText());
+	setResult(RESULT_OK, intent);
+	finish();
+	return true;
   }
   
   void handleOcrContinuousDecode(OcrResult ocrResult) {

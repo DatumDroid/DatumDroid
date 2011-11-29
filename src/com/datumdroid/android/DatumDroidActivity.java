@@ -20,6 +20,8 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.datumdroid.android.ocr.CaptureActivity;
+
 public class DatumDroidActivity extends Activity {
 	public static final String PACKAGE_NAME = "com.datumdroid.android.ocr";
 	public static final String DATA_PATH = Environment
@@ -146,7 +148,7 @@ public class DatumDroidActivity extends Activity {
 
 					public void onClick(View v) {
 						Log.v(TAG, "Starting OCR");
-						Intent intent = new Intent("android.intent.action.VIEW");
+						Intent intent = new Intent(DatumDroidActivity.this, CaptureActivity.class);
 						startActivityForResult(intent, 0);
 					}
 				});
@@ -177,6 +179,14 @@ public class DatumDroidActivity extends Activity {
 		Log.i(TAG, "onDestroy");
 		super.onDestroy();
 
+	}
+	
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == 0) {
+			if (resultCode == RESULT_OK) {
+				searchTextBox.setText(data.getDataString());
+			}
+		}
 	}
 
 	// function to check for wifi connectivity
