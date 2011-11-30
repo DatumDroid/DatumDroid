@@ -5,7 +5,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Set;
+import java.net.URL;
+import java.util.Map;
 
 import android.app.Activity;
 import android.content.Context;
@@ -20,9 +21,13 @@ import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -52,7 +57,7 @@ public class DatumDroidActivity extends Activity {
 	private final int MAX_RECENT_SEARCH_TERMS = 5;
 	String[] test = new String[MAX_RECENT_SEARCH_TERMS];
 	SharedPreferences recentSearchTerms;
-    SharedPreferences.Editor editor;
+    SharedPreferences.Editor RSTeditor;
 
 	protected Button ocrButton;
 	protected EditText searchTextBox;
@@ -61,15 +66,31 @@ public class DatumDroidActivity extends Activity {
 	protected static final String PHOTO_TAKEN = "photo_taken";
 	protected static final String SEARCH_QUERY = "search_query";
 	private static final String RECENT_SEARCH_TERMS = "Recent Search Terms";
-	private boolean insert = false;
+	private static final String CONTENT_SOURCES = "Content Sources";
+	private boolean insert_search = false;
+	private boolean isWifi ;
+	private boolean is3G;
+	private boolean insert_content = false;
+	private Map<String,Object> content_sources_select;
+	private Map<String,String> content_sources;
+	SharedPreferences contentSources;
+	SharedPreferences.Editor CSeditor;
 
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-		recentSearchTerms = getSharedPreferences(RECENT_SEARCH_TERMS, MODE_PRIVATE);//getPreferences(MODE_PRIVATE);
-		editor = recentSearchTerms.edit();
+		recentSearchTerms = getSharedPreferences(RECENT_SEARCH_TERMS, MODE_PRIVATE);
+		RSTeditor = recentSearchTerms.edit();
+		contentSources = getSharedPreferences(CONTENT_SOURCES, MODE_PRIVATE);
+		CSeditor = contentSources.edit();
+		CSeditor.putString("pref1", "youtube.com");
+		CSeditor.putString("pref2", "gimages.com");
+		CSeditor.putString("pref3", "guardian.com");
+		CSeditor.putString("pref4", "twitter.com");
+		CSeditor.putString("pref5", "feedzilla.com");
+		CSeditor.commit();
 		Log.i(TAG, "onCreate");
 
 	}
@@ -82,27 +103,27 @@ public class DatumDroidActivity extends Activity {
 			Log.w(TAG, "IN INSERT");
 			for(int i = 0; i<MAX_RECENT_SEARCH_TERMS; i++) {
 				if(test[i].equalsIgnoreCase(searchedText)) {
-					temp = i+1; // since in array it is 0-4 and in shared 
+					repeatedSearchPos = i+1; // since in array it is 0-4 and in shared 
 								//preferences it is 1-5
 					break;
 				}
 			}
-			if(temp != -1) {
+			if(repeatedSearchPos != -1) {
 				
-				for(int i = temp; i>=1; i--) {
-					editor.putString(Integer.toString(i),recentSearchTerms.getString(Integer.toString(i-1), EMPTY));
+				for(int i = repeatedSearchPos; i>=1; i--) {
+					RSTeditor.putString(Integer.toString(i),recentSearchTerms.getString(Integer.toString(i-1), EMPTY));
 				}
-				editor.putString(Integer.toString(1), searchedText);
-				editor.commit();			
-				temp = -1;
+				RSTeditor.putString(Integer.toString(1), searchedText);
+				RSTeditor.commit();			
+				repeatedSearchPos = -1;
 			}else {
 				for(int i = 5; i>=2; i--) {
-					editor.putString(Integer.toString(i),recentSearchTerms.getString(Integer.toString(i-1), EMPTY));
+					RSTeditor.putString(Integer.toString(i),recentSearchTerms.getString(Integer.toString(i-1), EMPTY));
 				}
-				editor.putString(Integer.toString(1), searchedText);
-				editor.commit();		
+				RSTeditor.putString(Integer.toString(1), searchedText);
+				RSTeditor.commit();		
 			}
-	        insert = false;
+			insert_search = false;
 		}
 		for(int i = 1; i<= MAX_RECENT_SEARCH_TERMS; i++) {
 			Log.w(TAG, Integer.toString(i));
@@ -121,11 +142,17 @@ public class DatumDroidActivity extends Activity {
 			public void onItemClick(AdapterView<?> adapter, View view,
 					int position, long arg3) {
 				if(recentSearchList.getItemAtPosition(position).toString().equalsIgnoreCase(EMPTY)
-						== false) {
-					insert = true;
+						== false && (isWifi || is3G) == true) {
+					insert_search = true;
 					searchedText = recentSearchList.getItemAtPosition(position).toString();
+<<<<<<< HEAD
 					Intent i = new Intent(getBaseContext(), MainViewPageActivity.class);
 					startActivity(i);
+=======
+//					new FeedAsyncTask(DatumDroidActivity.this, 
+//							searchedText, ALL).execute();
+				}
+>>>>>>> 0a30feeeedd0fe38d4ce935fecee5833439db558
 				}
 			}
 		});   */
@@ -194,7 +221,6 @@ public class DatumDroidActivity extends Activity {
 							Log.i(TAG, "SEARCH TERM IS EMPTY");
 						} else {
 							searchedText = searchTextBox.getText().toString().trim();
-							insert = true;
 							finish();
 							Intent i = new Intent(getBaseContext(), MainViewPageActivity.class);
 							i.putExtra(SEARCH_QUERY_EXTRA, searchedText);
@@ -226,11 +252,33 @@ public class DatumDroidActivity extends Activity {
 		Log.i(TAG, "onPause");
 	}
 
-	@Override
 	protected void onDestroy() {
 		Log.i(TAG, "onDestroy");
 		super.onDestroy();
 
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+	    MenuInflater inflater = getMenuInflater();
+	    inflater.inflate(R.menu.menu_options, menu);
+	    return true;
+	}
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+	    // Handle item selection
+		
+	    switch (item.getItemId()) {
+	    case R.id.content:
+	    	Log.i(TAG, "content pressed");
+	    	insert_content = true;
+	        return true;
+	    case R.id.about:
+	    	Log.i(TAG, "about pressed");
+	        return true;
+	    default:
+	        return super.onOptionsItemSelected(item);
+	    }
 	}
 
 	protected void startCameraActivity() {

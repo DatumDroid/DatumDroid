@@ -24,6 +24,8 @@
             android:name="com.datumdroid.android.MainViewPageActivity" >
         </activity>
         
+            <activity android:name="com.datumdroid.android.SetContentPrefs"></activity>
+        
         <receiver
             android:enabled="true"
             android:name="com.datumdroid.android.IntentReceiver" >

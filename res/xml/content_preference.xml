@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+ <PreferenceCategory  android:key="contentCategory" android:title="Content_Settings">
+
+	<EditTextPreference
+   	android:key="editTextPref"
+   	android:title="New Source"
+   	android:summary="Please enter the url for your favorite source"
+   	android:defaultValue="http://"/>
+   
+	<CheckBoxPreference
+   	android:key="pref1"
+   	android:title="youtube"
+   	android:defaultValue="true"/>
+   
+   	<CheckBoxPreference
+   	android:key="pref2"
+   	android:title="gimages"
+   	android:defaultValue="true"/>
+   
+   	<CheckBoxPreference
+   	android:key="pref3"
+   	android:title="guardian"
+   	android:defaultValue="true"/>
+   
+   	<CheckBoxPreference
+   	android:key="pref4"
+   	android:title="twitter"
+   	android:defaultValue="true"/>
+   
+   	<CheckBoxPreference
+   	android:key="pref5"
+   	android:title="feedzilla"
+   	android:defaultValue="true"/>
+
+ </PreferenceCategory>
+
+</PreferenceScreen>
