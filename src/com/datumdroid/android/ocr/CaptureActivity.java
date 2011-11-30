@@ -639,7 +639,8 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
     setProgressBarVisibility(false);
 
 	Log.v(TAG, "Sending back OCR Text " + ocrResult.getText());
-	Intent intent = new Intent(ocrResult.getText());
+	Intent intent = new Intent();
+	intent.putExtra("ocrResult", ocrResult.getText());
 	setResult(RESULT_OK, intent);
 	finish();
 	return true;

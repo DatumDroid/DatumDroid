@@ -182,11 +182,14 @@ public class DatumDroidActivity extends Activity {
 	}
 	
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (requestCode == 0) {
-			if (resultCode == RESULT_OK) {
-				searchTextBox.setText(data.getDataString());
+		if (requestCode == 0 && resultCode == RESULT_OK) {
+			if (searchTextBox.getText().length() != 0) {
+				searchTextBox.append(" " + data.getStringExtra("ocrResult"));
+			} else {
+				searchTextBox.setText(data.getStringExtra("ocrResult"));
 			}
 		}
+		
 	}
 
 	// function to check for wifi connectivity
