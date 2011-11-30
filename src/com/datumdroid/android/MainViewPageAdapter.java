@@ -17,7 +17,6 @@ import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.datumdroid.android.R;
 import com.viewpagerindicator.TitleProvider;
 
 public class MainViewPageAdapter extends PagerAdapter implements TitleProvider {

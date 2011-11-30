@@ -29,7 +29,6 @@ public class DatumDroidActivity extends Activity {
 
 	private static final String TAG = "DatumDroid";
 	private static final String ALL = "all";
-	private static String EMPTY = "empty...";
 	
 	private String searchedText;
 	private int temp = -1;
@@ -71,14 +70,14 @@ public class DatumDroidActivity extends Activity {
 			if(temp != -1) {
 				
 				for(int i = temp; i>=1; i--) {
-					editor.putString(Integer.toString(i),recentSearchTerms.getString(Integer.toString(i-1), EMPTY));
+					editor.putString(Integer.toString(i),recentSearchTerms.getString(Integer.toString(i-1), ""));
 				}
 				editor.putString(Integer.toString(1), searchedText);
 				editor.commit();			
 				temp = -1;
-			}else {
+			} else {
 				for(int i = 5; i>=2; i--) {
-					editor.putString(Integer.toString(i),recentSearchTerms.getString(Integer.toString(i-1), EMPTY));
+					editor.putString(Integer.toString(i),recentSearchTerms.getString(Integer.toString(i-1), ""));
 				}
 				editor.putString(Integer.toString(1), searchedText);
 				editor.commit();		
@@ -86,9 +85,7 @@ public class DatumDroidActivity extends Activity {
 	        insert = false;
 		}
 		for(int i = 1; i<= MAX_RECENT_SEARCH_TERMS; i++) {
-//			Log.w(TAG, Integer.toString(i));
-//			Log.w(TAG, recentSearchTerms.getString(Integer.toString(i), EMPTY));
-			test[i-1] = recentSearchTerms.getString(Integer.toString(i), EMPTY);	        
+			test[i-1] = recentSearchTerms.getString(Integer.toString(i), "");	        
 		}
 				
 		ListAdapter adapter = new ArrayAdapter<String>(this, R.layout.recent_search_list_item, test);
@@ -98,14 +95,11 @@ public class DatumDroidActivity extends Activity {
         recentSearchList.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> adapter, View view,
 					int position, long arg3) {
-				if(recentSearchList.getItemAtPosition(position).toString().equalsIgnoreCase(EMPTY)
-						== false) {
-					insert = true;
-					searchedText = recentSearchList.getItemAtPosition(position).toString();
-					new MyAsyncTask(DatumDroidActivity.this, 
-							searchedText, ALL).execute();
-				}
-				}
+				insert = true;
+				searchedText = recentSearchList.getItemAtPosition(position).toString();
+				new MyAsyncTask(DatumDroidActivity.this, 
+					searchedText, ALL).execute();
+			}
 		});   
 
 		try {
@@ -183,13 +177,13 @@ public class DatumDroidActivity extends Activity {
 	
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == 0 && resultCode == RESULT_OK) {
+			String ocrResult = data.getStringExtra("ocrResult").replaceAll("[^a-zA-Z0-9]+", " ").trim();
 			if (searchTextBox.getText().length() != 0) {
-				searchTextBox.append(" " + data.getStringExtra("ocrResult"));
+				searchTextBox.append(" " + ocrResult);
 			} else {
-				searchTextBox.setText(data.getStringExtra("ocrResult"));
+				searchTextBox.setText(ocrResult);
 			}
-		}
-		
+		}	
 	}
 
 	// function to check for wifi connectivity
