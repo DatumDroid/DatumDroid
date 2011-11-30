@@ -16,4 +16,13 @@
     <string name="recent_search">Recent Searches</string>
     <string name="content_settings">Content Settings</string>
     <string name="about_us">About Us</string>
+	<string name="button_done">Done</string>
+	<string name="msg_unmount_usb">Sorry, the SD card is not accessible.</string>
+	<string name="ocr_msg_capture_status_bottom">Resize the selector to place text inside and press camera button.</string>
+	<string name="ocr_msg_capture_status_top"></string>
+	<string name="preferences_title">Preferences</string>
+	<string name="preferences_settings_for_text_recognition">Text recognition settings</string>
+	<string name="preference_text_recognition_language">Select language</string>
+	<string name="preference_text_recognition_language_summary">Chinese (Simplified)</string>
+	<string name="preference_text_recognition_language_dialogtitle">Select language</string>
 </resources>

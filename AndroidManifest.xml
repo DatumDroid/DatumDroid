@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    android:installLocation="preferExternal"
     package="com.datumdroid.android"
     android:versionCode="1"
-    android:versionName="1.0.0" android:installLocation="preferExternal">
+    android:versionName="1.0.0">
 
     <uses-sdk android:minSdkVersion="7" android:targetSdkVersion="13"/>
 
@@ -15,7 +16,6 @@
             android:name=".DatumDroidActivity" >
             <intent-filter >
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -24,7 +24,18 @@
             android:name="com.datumdroid.android.MainViewPageActivity" >
         </activity>
         
-            <activity android:name="com.datumdroid.android.SetContentPrefs"></activity>
+        <activity android:name="com.datumdroid.android.SetContentPrefs" />
+        
+        <activity
+            android:name=".ocr.CaptureActivity"
+            android:screenOrientation="landscape"
+            android:configChanges="orientation|keyboardHidden"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
+        </activity>
+        
+        <activity android:name=".ocr.PreferencesActivity"
+            android:screenOrientation="landscape"
+            android:configChanges="orientation|keyboardHidden" />
         
         <receiver
             android:enabled="true"

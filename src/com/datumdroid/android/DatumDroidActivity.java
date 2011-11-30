@@ -39,6 +39,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
+import com.datumdroid.android.ocr.CaptureActivity;
 import com.googlecode.tesseract.android.TessBaseAPI;
 
 public class DatumDroidActivity extends Activity {
@@ -156,43 +157,7 @@ public class DatumDroidActivity extends Activity {
 				}
 			}
 		});   */
-        Log.i(TAG, "Trying to copy.");
-		String[] paths = new String[] { DATA_PATH, DATA_PATH + "tessdata/" };
-		boolean try_copy = !(new File(DATA_PATH + "eng.traineddata")).exists();
-
-		for (String t : paths) {
-			File dir = new File(t);
-			if (!dir.exists()) {
-				Log.v(TAG, "creating directory [" + t + "]");
-				if (!dir.mkdirs()) {
-					Log.v(TAG, "error: create dir " + t + "on failed");
-					try_copy = false;
-					// We can still do without OCR
-				}
-			}
-		}
-
-		if (try_copy) {
-			try {
-				AssetManager assetManager = getAssets();
-				InputStream in = assetManager.open("tessdata/eng.traineddata");
-				OutputStream out = new FileOutputStream(DATA_PATH
-						+ "tessdata/eng.traineddata");
-
-				// Transfer bytes from in to out
-				byte[] buf = new byte[1024];
-				int len;
-				while ((len = in.read(buf)) > 0) {
-					out.write(buf, 0, len);
-				}
-				in.close();
-				out.close();
-
-				Log.v(TAG, "Copied eng traineddata");
-			} catch (IOException e) {
-				Log.e(TAG, "Was unable to copy eng traineddata " + e.toString());
-			}
-		}
+       
 		Log.i(TAG, "Checking for connection.");
 		try {
 			boolean isWifi = checkWifiConnection();
@@ -234,7 +199,8 @@ public class DatumDroidActivity extends Activity {
 
 					public void onClick(View v) {
 						Log.v(TAG, "Starting OCR");
-						startCameraActivity();
+						Intent intent = new Intent(DatumDroidActivity.this, CaptureActivity.class);
+						startActivityForResult(intent, 0);
 					}
 				});
 
@@ -281,111 +247,16 @@ public class DatumDroidActivity extends Activity {
 	    }
 	}
 
-	protected void startCameraActivity() {
-		File file = new File(ocrPath);
-		Uri outputFileUri = Uri.fromFile(file);
-
-		final Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-		intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
-
-		startActivityForResult(intent, 0);
-	}
-
-	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		Log.i(TAG, "OCR resultCode: " + resultCode);
-
-		if (resultCode == -1) {
-			onPhotoTaken();
-		} else {
-			Log.i(TAG, "User cancelled OCR Save");
-		}
-	}
-
-	protected void onPhotoTaken() {
-		ocrTaken = true;
-
-		BitmapFactory.Options options = new BitmapFactory.Options();
-		options.inSampleSize = 4;
-
-		Bitmap bitmap = BitmapFactory.decodeFile(ocrPath, options);
-
-		try {
-			ExifInterface exif = new ExifInterface(ocrPath);
-			int exifOrientation = exif.getAttributeInt(
-					ExifInterface.TAG_ORIENTATION,
-					ExifInterface.ORIENTATION_NORMAL);
-
-			Log.v(TAG, "Orient: " + exifOrientation);
-
-			int rotate = 0;
-
-			switch (exifOrientation) {
-			case ExifInterface.ORIENTATION_ROTATE_90:
-				rotate = 90;
-				break;
-			case ExifInterface.ORIENTATION_ROTATE_180:
-				rotate = 180;
-				break;
-			case ExifInterface.ORIENTATION_ROTATE_270:
-				rotate = 270;
-				break;
+		if (requestCode == 0 && resultCode == RESULT_OK) {
+			String ocrResult = data.getStringExtra("ocrResult").replaceAll("[^a-zA-Z0-9]+", " ").trim();
+			if (searchTextBox.getText().length() != 0) {
+				searchTextBox.append(" " + ocrResult);
+			} else {
+				searchTextBox.setText(ocrResult);
 			}
-
-			Log.v(TAG, "OCR Rotation: " + rotate);
-
-			if (rotate != 0) {
-
-				// Getting width & height of the given image.
-				int w = bitmap.getWidth();
-				int h = bitmap.getHeight();
-
-				// Setting pre rotate
-				Matrix mtx = new Matrix();
-				mtx.preRotate(rotate);
-
-				// Rotating Bitmap
-				bitmap = Bitmap.createBitmap(bitmap, 0, 0, w, h, mtx, false);
-
-				// Convert to ARGB_8888, required by tess
-				bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
-			}
-
-		} catch (IOException e) {
-			Log.e(TAG, "Couldn't correct orientation for OCR: " + e.toString());
-		}
-
-		TessBaseAPI baseApi = new TessBaseAPI();
-		// baseApi.setDebug(true);
-
-		// Only English supported for the time being
-		baseApi.init(DATA_PATH, "eng");
-		baseApi.setImage(bitmap);
-
-		String recognizedText = baseApi.getUTF8Text()
-				.replaceAll("[^a-zA-Z0-9]+", " ").trim();
-
-		Log.v(TAG, recognizedText);
-		searchTextBox.setText(searchTextBox.getText() + " " + recognizedText);
-		baseApi.end();
+		}	
 	}
-
-	@Override
-	protected void onSaveInstanceState(Bundle outState) {
-		outState.putBoolean(PHOTO_TAKEN, ocrTaken);
-		outState.putString(SEARCH_QUERY, searchTextBox.getText().toString());
-	}
-
-	@Override
-	protected void onRestoreInstanceState(Bundle savedInstanceState) {
-		Log.i(TAG, "onRestoreInstanceState()");
-		if (savedInstanceState.getBoolean(DatumDroidActivity.PHOTO_TAKEN)) {
-			onPhotoTaken();
-		}
-		
-		searchTextBox.setText(savedInstanceState.getString(SEARCH_QUERY));
-	}
-
 
 	// function to check for wifi connectivity
 	public boolean checkWifiConnection() {
