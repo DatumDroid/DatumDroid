@@ -16,7 +16,7 @@
         android:id="@+id/item_title"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/thumbnail"
+        android:layout_toRightOf="@+id/item_thumb"
         android:text="Title text"
         android:ellipsize="end"
         android:textAppearance="?android:attr/textAppearanceMedium" />
@@ -25,8 +25,9 @@
         android:id="@+id/item_desc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/list_text"
-        android:layout_below="@+id/list_text"
+        android:layout_alignLeft="@+id/item_title"
+        android:layout_toRightOf="@+id/item_thumb"
+        android:layout_below="@+id/item_title"
         android:ellipsize="end"
         android:text="Description text" />
 

@@ -45,6 +45,8 @@ public class DatumDroidActivity extends Activity {
 	private static final String ALL = "all";
 	private static String EMPTY = "empty...";
 	
+	public static final String SEARCH_QUERY_EXTRA = "search_query";
+	
 	private String searchedText;
 	private int temp = -1;
 	private final int MAX_RECENT_SEARCH_TERMS = 5;
@@ -73,9 +75,9 @@ public class DatumDroidActivity extends Activity {
 	}
 
 	@Override
-	protected void onStart() {
-		super.onStart();
-		
+	protected void onResume() {
+		super.onResume();/*
+		Log.i(TAG, "onStart");
 		if(insert && !(test[0].equalsIgnoreCase(searchedText))) {
 			Log.w(TAG, "IN INSERT");
 			for(int i = 0; i<MAX_RECENT_SEARCH_TERMS; i++) {
@@ -103,15 +105,18 @@ public class DatumDroidActivity extends Activity {
 	        insert = false;
 		}
 		for(int i = 1; i<= MAX_RECENT_SEARCH_TERMS; i++) {
-//			Log.w(TAG, Integer.toString(i));
-//			Log.w(TAG, recentSearchTerms.getString(Integer.toString(i), EMPTY));
+			Log.w(TAG, Integer.toString(i));
+			Log.w(TAG, recentSearchTerms.getString(Integer.toString(i), EMPTY));
 			test[i-1] = recentSearchTerms.getString(Integer.toString(i), EMPTY);	        
 		}
-				
+		Log.i(TAG, "Loading recentSearchList.");
 		ListAdapter adapter = new ArrayAdapter<String>(this, R.layout.recent_search_list_item, test);
+		Log.i(TAG, "1");
         final ListView recentSearchList = (ListView) findViewById(R.id.recentSearchList);
+        Log.i(TAG, findViewById(R.id.recentSearchList).toString());
+        Log.i(TAG, "2");
         recentSearchList.setAdapter(adapter);
-
+        Log.i(TAG, "OIC");
         recentSearchList.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> adapter, View view,
 					int position, long arg3) {
@@ -119,12 +124,12 @@ public class DatumDroidActivity extends Activity {
 						== false) {
 					insert = true;
 					searchedText = recentSearchList.getItemAtPosition(position).toString();
-					new FeedAsyncTask(DatumDroidActivity.this, 
-							searchedText, ALL).execute();
+					Intent i = new Intent(getBaseContext(), MainViewPageActivity.class);
+					startActivity(i);
 				}
-				}
-		});   
-
+			}
+		});   */
+        Log.i(TAG, "Trying to copy.");
 		String[] paths = new String[] { DATA_PATH, DATA_PATH + "tessdata/" };
 		boolean try_copy = !(new File(DATA_PATH + "eng.traineddata")).exists();
 
@@ -161,7 +166,7 @@ public class DatumDroidActivity extends Activity {
 				Log.e(TAG, "Was unable to copy eng traineddata " + e.toString());
 			}
 		}
-
+		Log.i(TAG, "Checking for connection.");
 		try {
 			boolean isWifi = checkWifiConnection();
 			boolean is3G = check3gConnection();
@@ -187,12 +192,13 @@ public class DatumDroidActivity extends Activity {
 							Toast.makeText(DatumDroidActivity.this,
 									R.string.null_search_term, Toast.LENGTH_SHORT);
 							Log.i(TAG, "SEARCH TERM IS EMPTY");
-						} else {	
-							
+						} else {
 							searchedText = searchTextBox.getText().toString().trim();
 							insert = true;
-							new FeedAsyncTask(DatumDroidActivity.this, searchedText,
-									ALL).execute();
+							finish();
+							Intent i = new Intent(getBaseContext(), MainViewPageActivity.class);
+							i.putExtra(SEARCH_QUERY_EXTRA, searchedText);
+							startActivity(i);
 						}
 					}
 				});
@@ -218,13 +224,6 @@ public class DatumDroidActivity extends Activity {
 	protected void onPause() {
 		super.onPause();
 		Log.i(TAG, "onPause");
-	}
-
-	@Override
-	protected void onResume() {
-		super.onResume();
-		Log.i(TAG, "onResume");  
-
 	}
 
 	@Override

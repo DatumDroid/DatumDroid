@@ -54,7 +54,7 @@ public class VideoListAdapter extends BaseAdapter {
 			vi = inflater.inflate(R.layout.item, null);
 		}
 
-		TextView text = (TextView) vi.findViewById(R.id.list_text);
+		TextView text = (TextView) vi.findViewById(R.id.item_title);
 		ImageView image = (ImageView) vi.findViewById(R.id.thumbnail);
 		text.setAutoLinkMask(Linkify.WEB_URLS);
 		text.setText(title[position]);
