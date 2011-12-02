@@ -1,28 +1,15 @@
 package com.datumdroid.android;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URL;
 import java.util.Map;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.AssetManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
-import android.media.ExifInterface;
+import android.content.pm.ActivityInfo;
 import android.net.ConnectivityManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.preference.PreferenceManager;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
@@ -30,17 +17,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.Toast;
-import android.widget.AdapterView.OnItemClickListener;
 
 import com.datumdroid.android.ocr.CaptureActivity;
-import com.googlecode.tesseract.android.TessBaseAPI;
 
 public class DatumDroidActivity extends Activity {
 	public static final String PACKAGE_NAME = "com.datumdroid.android.ocr";
@@ -199,6 +180,11 @@ public class DatumDroidActivity extends Activity {
 
 					public void onClick(View v) {
 						Log.v(TAG, "Starting OCR");
+						
+						// Set orientation to landscape
+						// If we do not do this, the returning of the ocr result would fail
+						// And force close the application, we revert this in onActivityResult()
+						setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 						Intent intent = new Intent(DatumDroidActivity.this, CaptureActivity.class);
 						startActivityForResult(intent, 0);
 					}
@@ -255,7 +241,10 @@ public class DatumDroidActivity extends Activity {
 			} else {
 				searchTextBox.setText(ocrResult);
 			}
-		}	
+			
+			// Reset to user-pref orientation
+			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+		}
 	}
 
 	// function to check for wifi connectivity
