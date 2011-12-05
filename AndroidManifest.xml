@@ -25,6 +25,7 @@
         </activity>
         
         <activity android:name="com.datumdroid.android.SetContentPrefs" />
+        <activity android:name="com.datumdroid.android.AboutUs" />
         
         <activity
             android:name=".ocr.CaptureActivity"

@@ -274,6 +274,8 @@ public class DatumDroidActivity extends Activity {
 	        return true;
 	    case R.id.about:
 	    	Log.i(TAG, "about pressed");
+	    	Intent myIntent2 = new Intent(this,AboutUs.class);
+	    	startActivityForResult(myIntent2, 0);
 	        return true;
 	    default:
 	        return super.onOptionsItemSelected(item);
