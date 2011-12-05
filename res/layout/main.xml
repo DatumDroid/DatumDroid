@@ -26,12 +26,6 @@
         android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
-
-        <Button
-            android:id="@+id/ocrButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/capture_it" android:layout_weight="1"/>
 
         <Button
             android:id="@+id/searchButton"
@@ -39,7 +33,12 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:minWidth="60dip"
-            android:text="@string/datum_search" />
+            android:text="@string/datum_search" />
+        <Button
+            android:id="@+id/ocrButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/capture_it" android:layout_weight="1"/>
 
     </LinearLayout>
 

@@ -9,27 +9,27 @@
    	android:defaultValue="http://"/>
    
 	<CheckBoxPreference
-   	android:key="pref1"
+   	android:key="pref6"
    	android:title="youtube"
    	android:defaultValue="true"/>
    
    	<CheckBoxPreference
-   	android:key="pref2"
+   	android:key="pref7"
    	android:title="gimages"
    	android:defaultValue="true"/>
    
    	<CheckBoxPreference
-   	android:key="pref3"
+   	android:key="pref8"
    	android:title="guardian"
    	android:defaultValue="true"/>
    
    	<CheckBoxPreference
-   	android:key="pref4"
+   	android:key="pref9"
    	android:title="twitter"
    	android:defaultValue="true"/>
    
    	<CheckBoxPreference
-   	android:key="pref5"
+   	android:key="pref10"
    	android:title="feedzilla"
    	android:defaultValue="true"/>
 

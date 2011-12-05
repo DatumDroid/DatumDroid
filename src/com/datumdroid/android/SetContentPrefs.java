@@ -14,7 +14,8 @@ public class SetContentPrefs extends PreferenceActivity{
 	private static final String CONTENT_SOURCES = "Content Sources";
 	CheckBoxPreference checkBoxPreference;
 	
-	 @Override
+	 @SuppressWarnings("unchecked")
+	@Override
 	    public void onCreate(Bundle savedInstanceState) {
 	     super.onCreate(savedInstanceState);
 	     try{
@@ -30,8 +31,8 @@ public class SetContentPrefs extends PreferenceActivity{
 		        	//create one check box for each setting you need
 			        checkBoxPreference = new CheckBoxPreference(this);
 			        //make sure each key is unique  
-			        checkBoxPreference.setKey("pref"+Integer.toString(i));
-			        checkBoxPreference.setTitle(tempContent.get("pref"+Integer.toString(i)));
+			        checkBoxPreference.setKey("pref"+Integer.toString(i+5));//adjustment for OCR settings
+			        checkBoxPreference.setTitle(tempContent.get("pref"+Integer.toString(i+5)));
 			        checkBoxPreference.setChecked(true);
 			        targetCategory.addPreference(checkBoxPreference);
 		        	
