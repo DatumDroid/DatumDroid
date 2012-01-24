@@ -30,7 +30,7 @@ public class ImageLoader {
 			.synchronizedMap(new WeakHashMap<ImageView, String>());
 
 	public ImageLoader(Context context) {
-		// Make the background thead low priority. This way it will not affect
+		// Make the background thread low priority. This way it will not affect
 		// the UI performance
 		photoLoaderThread.setPriority(Thread.NORM_PRIORITY - 1);
 

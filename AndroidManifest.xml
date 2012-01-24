@@ -7,7 +7,7 @@
 
     <uses-sdk
         android:minSdkVersion="7"
-        android:targetSdkVersion="13" />
+        android:targetSdkVersion="10" />
 
     <supports-screens
         android:largeScreens="true"
@@ -19,8 +19,7 @@
         android:configChanges="keyboardHidden|orientation"
         android:icon="@drawable/icon"
         android:label="@string/app_name"
-        android:theme="@android:style/Theme.Light.NoTitleBar"
-    	android:debuggable="true" >
+        android:theme="@android:style/Theme.Light.NoTitleBar" >
         <activity
             android:label="@string/app_name"
             android:name=".DatumDroidActivity" >
@@ -36,8 +35,11 @@
         <activity
             android:name=".ocr.CaptureActivity"
             android:screenOrientation="landscape"
-            android:configChanges="orientation|keyboardHidden"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
+            android:configChanges="orientation|keyboardHidden" >
+            <intent-filter >
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.VIEW" />
+            </intent-filter>
         </activity>
         <activity android:name=".ocr.PreferencesActivity"
             android:screenOrientation="landscape"

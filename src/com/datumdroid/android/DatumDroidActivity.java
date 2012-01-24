@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.Environment;
@@ -142,6 +143,10 @@ public class DatumDroidActivity extends Activity {
 
 					public void onClick(View v) {
 						Log.v(TAG, "Starting OCR");
+						// Set orientation to landscape
+						// If we do not do this, the returning of the ocr result would fail
+						// And force close the application, we revert this in onActivityResult()
+						setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 						Intent intent = new Intent(DatumDroidActivity.this, CaptureActivity.class);
 						startActivityForResult(intent, 0);
 					}
@@ -177,6 +182,8 @@ public class DatumDroidActivity extends Activity {
 	
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == 0 && resultCode == RESULT_OK) {
+			// Reset to user-pref orientation
+			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
 			String ocrResult = data.getStringExtra("ocrResult").replaceAll("[^a-zA-Z0-9]+", " ").trim();
 			if (searchTextBox.getText().length() != 0) {
 				searchTextBox.append(" " + ocrResult);
