@@ -24,8 +24,7 @@
                android:layout_height="fill_parent"
                android:layout_centerInParent="true"/>
      
-  <com.datumdroid.android.ocr.ViewfinderView
-      android:id="@+id/viewfinder_view"
+  <com.datumdroid.app.ocr.ViewfinderView   android:id="@+id/viewfinder_view"
       android:layout_width="fill_parent"
       android:layout_height="fill_parent"
       android:background="#0000"/>
@@ -101,7 +100,7 @@
               android:autoLink="web"
               android:clickable="true" />
  
- 	<com.datumdroid.android.ocr.camera.ShutterButton
+ 	<com.datumdroid.app.ocr.camera.ShutterButton
               android:id="@+id/shutter_button"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
