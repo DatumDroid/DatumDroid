@@ -33,7 +33,7 @@ import android.util.Log;
 
 public class MyAsyncTask extends AsyncTask<Void, Void, Void> {
 	private static final String TAG = "DatumDroid";
-	private static final String SERVER_URL = "http://api.datumdroid.com/1.0/request.php";
+	private static final String SERVER_URL = "http://datumdroid.gaut.am/1.0/request.php";
 
 	private static final String ALL = "all";
 
